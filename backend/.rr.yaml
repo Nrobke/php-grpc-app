@@ -1,0 +1,11 @@
+
+server:
+  command: "php src/server.php"
+  relay: "pipes"
+
+grpc:
+  listen: "tcp://0.0.0.0:9001"
+  proto: "proto/echo.proto"
+
+logs:
+  level: info

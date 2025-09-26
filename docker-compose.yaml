@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: grpc-backend
+    ports:
+      - "9001:9001"
+    networks:
+      - grpc-network
+
+  envoy:
+    image: envoyproxy/envoy:v1.21-latest
+    container_name: grpc-envoy
+    ports:
+      - "8080:8080"
+      - "9901:9901"
+    volumes:
+      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+    depends_on:
+      - backend
+    networks:
+      - grpc-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: grpc-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - envoy
+    networks:
+      - grpc-network
+
+networks:
+  grpc-network:
+    driver: bridge
